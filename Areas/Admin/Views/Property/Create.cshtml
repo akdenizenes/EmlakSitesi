@@ -1,0 +1,101 @@
+@model EmlakSitesi.Models.Entities.Property
+@{
+    ViewData["Title"] = "Yeni İlan Ekle";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">🏠 Yeni İlan Ekle</h4>
+        </div>
+        <div class="card-body">
+            
+            <form asp-action="Create" method="post" enctype="multipart/form-data" id="propertyForm">
+                
+                <div asp-validation-summary="All" class="alert alert-danger fw-bold" style="display: @(ViewData.ModelState.IsValid ? "none" : "block")"></div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">İlan Başlığı</label>
+                            <input asp-for="Title" class="form-control" required />
+                        </div>
+                        
+                        <!-- İLAN TİPİ SEÇİMİ (Eklendi) -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">İlan Tipi</label>
+                            <select asp-for="ListingType" class="form-select" required>
+                                <option value="">-- İlan Tipi Seçin --</option>
+                                <option value="1">Satılık</option>
+                                <option value="2">Kiralık</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Fiyat (₺)</label>
+                            <input asp-for="Price" type="number" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">İlan Fotoğrafları</label>
+                            <input type="file" name="imageFiles" id="imageFiles" class="form-control" multiple accept="image/*" />
+                            <small class="text-muted">Lütfen en az bir adet fotoğraf seçin.</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Şehir</label>
+                            <select asp-for="CityId" class="form-select" asp-items="ViewBag.Cities" id="CityId" required>
+                                <option value="">-- Şehir Seçin --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">İlçe</label>
+                            <select asp-for="DistrictId" class="form-select" id="DistrictId" required>
+                                <option value="">-- Önce Şehir Seçin --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Açık Adres / Mahalle</label>
+                            <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+                            <input type="hidden" asp-for="Neighborhood" value="Belirtilmedi" />
+                            <input type="hidden" asp-for="Description" value="İlan detayı yakında eklenecek." />
+                            <input type="hidden" asp-for="HeatingType" value="Belirtilmedi" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4 border-top pt-3">
+                    <button type="submit" class="btn btn-primary px-5">Kaydet</button>
+                    <a href="/Admin/Property/Index" class="btn btn-secondary px-5">İptal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("CityId").addEventListener("change", function () {
+        var cityId = this.value;
+        var districtSelect = document.getElementById("DistrictId");
+        
+        districtSelect.innerHTML = '<option value="">Yükleniyor...</option>';
+
+        if (cityId) {
+            fetch('/Admin/Property/GetDistricts?cityId=' + cityId)
+                .then(response => response.json())
+                .then(data => {
+                    districtSelect.innerHTML = '<option value="">-- İlçe Seçin --</option>';
+                    data.forEach(function (d) {
+                        var opt = document.createElement("option");
+                        opt.value = d.id;
+                        opt.text = d.name;
+                        districtSelect.appendChild(opt);
+                    });
+                });
+        }
+    });
+</script>

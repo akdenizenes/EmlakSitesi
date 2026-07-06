@@ -1,0 +1,110 @@
+@model EmlakSitesi.Models.Entities.Property
+@{
+    ViewData["Title"] = "İlan Düzenle";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">✏️ İlan Düzenle</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                
+                <!-- Mevcut verileri kaybetmemek için ID ve diğer varsayılanları gizli tutuyoruz -->
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="Slug" />
+                <input type="hidden" asp-for="CreatedAt" />
+                <input type="hidden" asp-for="Neighborhood" />
+                <input type="hidden" asp-for="Description" />
+                <input type="hidden" asp-for="HeatingType" />
+                
+                <div class="row">
+                    <!-- Sol Kolon: Temel Bilgiler -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">İlan Başlığı</label>
+                            <input asp-for="Title" class="form-control" required />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Fiyat (₺)</label>
+                            <input asp-for="Price" type="number" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">İlan Türü</label>
+                            <select asp-for="ListingType" class="form-select" required>
+                                <option value="1">Satılık</option>
+                                <option value="2">Kiralık</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Sağ Kolon: Konum Bilgileri -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Şehir</label>
+                            <select asp-for="CityId" class="form-select" asp-items="ViewBag.Cities" id="CityId" required>
+                                <option value="">-- Şehir Seçin --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">İlçe</label>
+                            <!-- İlçeleri ViewBag'den çekiyoruz, böylece ilanın mevcut ilçesi seçili gelir -->
+                            <select asp-for="DistrictId" class="form-select" asp-items="ViewBag.Districts" id="DistrictId" required>
+                                <option value="">-- Önce Şehir Seçin --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Açık Adres / Mahalle</label>
+                            <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="form-check mb-4 mt-2">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveCheck">
+                            <label class="form-check-label" for="isActiveCheck">
+                                İlan aktif olsun mu?
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4 border-top pt-3">
+                    <button type="submit" class="btn btn-primary px-5">Güncelle</button>
+                    <a href="/Admin/Property/Index" class="btn btn-secondary px-5">İptal</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Şehir değiştiğinde İlçeleri getiren AJAX Kodu -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var citySelect = document.getElementById("CityId");
+        var districtSelect = document.getElementById("DistrictId");
+
+        citySelect.addEventListener("change", function () {
+            var cityId = this.value;
+            districtSelect.innerHTML = '<option value="">-- İlçe Seçin --</option>'; 
+
+            if (cityId) {
+                fetch('/Admin/Property/GetDistricts?cityId=' + cityId)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(function (district) {
+                            var option = document.createElement("option");
+                            option.value = district.id;
+                            option.text = district.name;
+                            districtSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Hata:', error));
+            }
+        });
+    });
+</script>

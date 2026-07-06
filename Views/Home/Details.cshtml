@@ -1,0 +1,123 @@
+@model EmlakSitesi.Models.Entities.Property
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container py-5">
+    <div class="row">
+
+        <!-- Sol Taraf: Fotoğraf Galerisi (Slider) -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-2">
+
+                    @if (Model.Images != null && Model.Images.Any())
+                    {
+                        <div id="propertyGallery" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner" style="border-radius: 8px;">
+                                @{ var isFirst = true; }
+                                @foreach (var image in Model.Images.OrderBy(i => i.SortOrder))
+                                {
+                                    <div class="carousel-item @(isFirst ? "active" : "")">
+                                        <img src="@image.FilePath" class="d-block w-100" style="height: 500px; object-fit: cover;" alt="İlan Fotoğrafı">
+                                    </div>
+                                    isFirst = false;
+                                }
+                            </div>
+
+                            <!-- Slider Yön Tuşları -->
+                            @if (Model.Images.Count > 1)
+                            {
+                                <button class="carousel-control-prev" type="button" data-bs-target="#propertyGallery" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Önceki</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#propertyGallery" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Sonraki</span>
+                                </button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Fotoğraf yoksa gösterilecek varsayılan resim -->
+                        <img src="https://via.placeholder.com/800x500?text=Fotograf+Bekleniyor" class="img-fluid" style="border-radius: 8px; width: 100%; height: 500px; object-fit: cover;" alt="Resim Yok">
+                    }
+
+                </div>
+            </div>
+
+            <!-- İlan Açıklaması Kısmı -->
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+                    <h4 class="fw-bold text-success">İlan Açıklaması</h4>
+                </div>
+                <div class="card-body text-muted" style="line-height: 1.8;">
+                    @Model.Description
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Taraf: İlanın Künyesi (Bilgiler) -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge @(Model.ListingType == EmlakSitesi.Models.Entities.ListingType.Satilik ? "bg-primary" : "bg-warning text-dark") px-3 py-2 fs-6">
+                            @Model.ListingType
+                        </span>
+                        <span class="text-muted small">İlan No: #@Model.Id</span>
+                    </div>
+
+                    <h2 class="fw-bold text-success mb-1">@Model.Price.ToString("N0") ₺</h2>
+                    <h5 class="text-dark mb-3">@Model.Title</h5>
+
+                    <p class="text-muted mb-4 border-bottom pb-3">
+                        📍 @(Model.City?.Name), @(Model.District?.Name) <br />
+                        <span class="small">@Model.Neighborhood Mahallesi</span>
+                    </p>
+
+                    <h6 class="fw-bold text-dark mb-3">Özellikler</h6>
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Oda Salon Sayısı</span>
+                            <span class="fw-bold">@Model.RoomCount + @Model.LivingRoomCount</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Brüt / Net Alan</span>
+                            <span class="fw-bold">@Model.GrossArea m² / @Model.NetArea m²</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Bulunduğu Kat</span>
+                            <span class="fw-bold">@Model.Floor / @Model.TotalFloors</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Bina Yaşı</span>
+                            <span class="fw-bold">@Model.BuildYear</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Isıtma Tipi</span>
+                            <span class="fw-bold">@Model.HeatingType</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Eşyalı Mı?</span>
+                            <span class="fw-bold">@(Model.IsFurnished ? "Evet" : "Hayır")</span>
+                        </li>
+                    </ul>
+
+                    <!-- Çalışan İletişim Butonları -->
+                    <a href="https://wa.me/905000000000?text=Merhaba, Emlak Sitenizdeki #@Model.Id numaralı (@Model.Title) ilanınız için bilgi almak istiyorum." target="_blank" class="btn btn-success w-100 fw-bold py-2 mb-2">
+                        💬 WhatsApp'tan İletişime Geç
+                    </a>
+                    <a href="tel:+905000000000" class="btn btn-outline-dark w-100 fw-bold py-2">
+                        📞 Telefonla Ara
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

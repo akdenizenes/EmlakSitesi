@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EmlakSitesi</title>
+    
+    <!-- Varsayılan CSS Dosyaları -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/EmlakSitesi.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <header>
+        <!-- Müşteri Tarafı Üst Menü (Navbar) -->
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 py-3">
+            <div class="container-fluid">
+                <!-- Site Logosu / Adı -->
+                <a class="navbar-brand fw-bold text-success fs-4" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-buildings"></i> EmlakSitesi
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Menüyü Aç">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <!-- Sol Taraf: Kategoriler -->
+                    <ul class="navbar-nav flex-grow-1 ms-3 gap-2">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark fw-bold" href="/Home/Category?type=satilik">Satılık İlanlar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark fw-bold" href="/Home/Category?type=kiralik">Kiralık İlanlar</a>
+                        </li>
+                    </ul>
+
+                    <!-- Sağ Taraf: Admin Paneline Geçiş Butonu -->
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="btn btn-outline-success btn-sm fw-bold px-3 py-2" href="/admin/login">
+                                <i class="bi bi-person-lock"></i> Yönetim Paneli
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Sayfa İçeriklerinin Yükleneceği Alan -->
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Alt Bilgi (Footer) -->
+    <footer class="border-top footer text-muted bg-white mt-5">
+        <div class="container py-4 text-center">
+            &copy; 2026 - EmlakSitesi - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-success text-decoration-none fw-bold">Gizlilik Politikası</a>
+        </div>
+    </footer>
+
+    <!-- Varsayılan JS Dosyaları -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

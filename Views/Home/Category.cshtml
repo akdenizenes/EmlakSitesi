@@ -1,0 +1,83 @@
+@model EmlakSitesi.Helpers.PaginatedList<EmlakSitesi.Models.Entities.Property>
+@{
+    ViewData["Title"] = ViewBag.CategoryName;
+}
+
+<div class="container py-5 mt-4">
+    <div class="d-flex justify-content-between align-items-end mb-4 border-bottom pb-2">
+        <h3 class="fw-bold text-success mb-0">@ViewBag.CategoryName</h3>
+        <span class="text-muted fw-bold">Toplam @Model.Count() İlan Bulundu</span>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning text-center py-5 shadow-sm" style="border-radius: 12px;">
+            <h4 class="fw-bold mb-3">Bu Kategoride İlan Bulunamadı</h4>
+            <p class="mb-0">Şu an için <strong>@ViewBag.CategoryName</strong> kategorisinde aktif bir ilanımız bulunmuyor.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var item in Model)
+            {
+                var coverImage = item.Images != null && item.Images.Any() 
+                    ? item.Images.OrderBy(i => i.SortOrder).First().FilePath 
+                    : "https://via.placeholder.com/600x400?text=Resim+Yok";
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0" style="transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        
+                        <div class="position-relative">
+                            <img src="@coverImage" class="card-img-top" alt="@item.Title" style="height: 250px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                            
+                            <!-- GÜNCELLENEN ETİKET: Kiralıksa sarı, değilse mavi -->
+                            @if (item.ListingType == EmlakSitesi.Models.Entities.ListingType.Kiralik)
+                            {
+                                <span class="badge bg-warning text-dark position-absolute" style="top: 15px; left: 15px; font-size: 0.9rem; padding: 8px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                    Kiralık
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary text-white position-absolute" style="top: 15px; left: 15px; font-size: 0.9rem; padding: 8px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                    Satılık
+                                </span>
+                            }
+                        </div>
+                        
+                        <div class="card-body">
+                            <h4 class="text-success fw-bold mb-2">@item.Price.ToString("N0") ₺</h4>
+                            <h6 class="card-title text-dark fw-bold text-truncate mb-2" title="@item.Title">@item.Title</h6>
+                            <p class="card-text text-muted small mb-0">
+                                <i class="bi bi-geo-alt-fill"></i> @(item.City != null ? item.City.Name : "Şehir Yok"), @(item.District != null ? item.District.Name : "İlçe Yok")
+                            </p>
+                        </div>
+                        
+                        <div class="card-footer bg-white border-0 pt-0 pb-3">
+                            <a href="/Home/Details/@item.Id" class="btn btn-outline-success w-100 fw-bold" style="border-radius: 8px;">İlanı İncele</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Model.TotalPages > 1)
+        {
+            var currentPage = Model.PageIndex;
+            var totalPages = Model.TotalPages;
+            
+            <nav aria-label="Sayfalama" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link text-success" href="@Url.Action("Category", new { type = ViewBag.Type, page = currentPage - 1 })">&laquo; Önceki</a>
+                    </li>
+                    <li class="page-item active"><span class="page-link bg-success border-success">@currentPage / @totalPages</span></li>
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link text-success" href="@Url.Action("Category", new { type = ViewBag.Type, page = currentPage + 1 })">Sonraki &raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    }
+</div>

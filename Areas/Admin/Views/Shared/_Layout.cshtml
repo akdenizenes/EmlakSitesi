@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Panel</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar (Sol Menü) -->
+        <div class="bg-dark text-white p-3 vh-100" style="width: 250px;">
+            <h4 class="mb-4">Emlak Yönetim</h4>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/Admin/Dashboard">Ana Sayfa</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">İlanlar (Yakında)</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Konumlar (Yakında)</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Ana İçerik Alanı -->
+        <div class="flex-grow-1 bg-light">
+            <!-- Üst Bar -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom p-3">
+                <div class="container-fluid">
+                    <span class="navbar-brand mb-0 h1">Yönetim Paneli</span>
+                    <div class="d-flex">
+                        <a href="/" class="btn btn-outline-secondary btn-sm" target="_blank">Siteye Git</a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Sayfaların Yükleneceği Yer -->
+            <div class="container-fluid p-4">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

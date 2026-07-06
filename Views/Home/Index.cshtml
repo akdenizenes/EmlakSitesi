@@ -1,0 +1,74 @@
+﻿@model IEnumerable<EmlakSitesi.Models.Entities.Property>
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<!-- Devasa Karşılama Ekranı (Hero Section) -->
+<div class="position-relative text-center d-flex justify-content-center align-items-center" 
+     style="height: 65vh; 
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), 
+            url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center / cover; 
+            margin-top: -16px;">
+    
+    <div class="px-3 w-100" style="max-width: 800px;">
+        <h1 class="display-4 fw-bold text-white mb-3">Hayalinizdeki Evi Hemen Bulun</h1>
+        <p class="lead text-light mb-5 fs-4">Yüzlerce satılık ve kiralık ilan arasında güvenle arama yapın.</p>
+        
+        <div class="card p-2 shadow-lg border-0" style="border-radius: 12px;">
+            <form asp-controller="Home" asp-action="Index" method="get" class="row g-2">
+                <div class="col-md-8">
+                    <input type="text" name="query" value="@ViewBag.SearchQuery" class="form-control form-control-lg border-0 shadow-none" placeholder="Şehir, ilçe veya mahalle yazın..." style="background-color: transparent;">
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-success btn-lg w-100 fw-bold" type="submit" style="border-radius: 8px;">
+                        🔍 İlan Ara
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Vitrin İlanları Bölümü -->
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-end mb-4 border-bottom pb-2">
+        <h3 class="fw-bold text-dark mb-0">Öne Çıkan İlanlar</h3>
+        <a href="#" class="text-success text-decoration-none fw-bold">Tümünü Gör &rarr;</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var item in Model)
+        {
+            var coverImage = item.Images != null && item.Images.Any() 
+                ? item.Images.OrderBy(i => i.SortOrder).First().FilePath 
+                : "https://via.placeholder.com/600x400?text=Resim+Yok";
+
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0" style="transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                    
+                    <div class="position-relative">
+                        <img src="@coverImage" class="card-img-top" alt="@item.Title" style="height: 250px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                        
+                        <!-- GÜNCELLENEN ETİKET KISMI -->
+                        <span class="badge @(item.ListingType == EmlakSitesi.Models.Entities.ListingType.Satilik ? "bg-primary" : "bg-warning text-dark") position-absolute" 
+                              style="top: 15px; left: 15px; font-size: 0.9rem; padding: 8px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            @(item.ListingType == EmlakSitesi.Models.Entities.ListingType.Satilik ? "Satılık" : "Kiralık")
+                        </span>
+                    </div>
+                    
+                    <div class="card-body">
+                        <h4 class="text-success fw-bold mb-2">@item.Price.ToString("N0") ₺</h4>
+                        <h6 class="card-title text-dark fw-bold text-truncate mb-2" title="@item.Title">@item.Title</h6>
+                        <p class="card-text text-muted small mb-0">
+                            <i class="bi bi-geo-alt-fill"></i> @(item.City != null ? item.City.Name : "Şehir Yok"), @(item.District != null ? item.District.Name : "İlçe Yok")
+                        </p>
+                    </div>
+                    
+                    <div class="card-footer bg-white border-0 pt-0 pb-3">
+                        <a href="/Home/Details/@item.Id" class="btn btn-outline-success w-100 fw-bold" style="border-radius: 8px;">İlanı İncele</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
